@@ -1,2 +1,20 @@
-# Mastering-Kubernetes
-This repository contains comprehensive resources and code examples to help you master Kubernetes, the leading container orchestration platform. Whether you're a beginner or an experienced developer, you'll find valuable insights and practical exercises to deepen your understanding of Kubernetes.
+<h1 align="center">
+    <img src="https://readme-typing-svg.herokuapp.com/?font=Righteous&size=35&center=true&vCenter=true&width=500&height=70&duration=4000&lines=Mastering+Kubernetes!;" />
+</h1>
+
+<h3 align="center">A Deep Dive into Kubernetes Architecture and Components</h3>
+
+ <hr/>
+ 
+<br/>
+<div align="center">
+    <img src="https://skillicons.dev/icons?i=kubernetes" width="150" height="120" /><br>
+</div>
+
+
+<hr/>
+
+
+
+
+
