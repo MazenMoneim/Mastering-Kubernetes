@@ -6,7 +6,6 @@
 
  <hr/>
  
-<br/>
 <div align="center">
     <img src="https://skillicons.dev/icons?i=kubernetes" width="150" height="120" /><br>
 </div>
