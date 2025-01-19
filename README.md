@@ -3,8 +3,6 @@
 </h1>
 
 <h3 align="center">A Deep Dive into Kubernetes Architecture and Components</h3>
-
- <hr/>
  
 <div align="center">
     <img src="https://skillicons.dev/icons?i=kubernetes" width="150" height="120" /><br>
