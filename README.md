@@ -386,6 +386,126 @@ Kubernetes interacts with Docker through a middleware utility called **dockershi
 <hr/>
 <hr/>
 
+<h1>🐳 DaemonSets</h1>
+    
+<h2>Overview</h2>
+<p>
+    A <strong>DaemonSet</strong> ensures that a copy of a Pod runs on each node in the Kubernetes cluster. DaemonSets are particularly useful for deploying system-level applications that need to run on all nodes.
+</p>
+    
+<h2>Functionality</h2>
+<ul>
+    <li>Runs one copy of your Pod on each node in your cluster.</li>
+    <li>Automatically adds a replica of the Pod to any new node added to the cluster.</li>
+    <li>Ensures that a copy of the Pod is always present on all nodes in the cluster.</li>
+</ul>
+    
+<h2>Examples</h2>
+<p>Common use cases for DaemonSets include:</p>
+<ul>
+    <li>Monitoring solutions</li>
+     <li>Log viewers</li>
+    <li>Network solutions</li>
+</ul>
+    
+<h2>Node Affinity</h2>
+<p>
+     DaemonSets use node-affinity rules to schedule Pods on specific nodes.
+</p>
+
+<br/>
+<div align="center">
+    <img src="https://github.com/user-attachments/assets/e83c461e-dac8-4f8c-bb73-95d9aa4b0725" width="800"/>
+</div>
+<br/>
+
+
+<br/>
+<hr/>
+<hr/>
+
+
+
+<h1>🐳 Static Pods</h1>
+    
+<h2>Overview</h2>
+<p>
+    The kubelet relies on the kube-apiserver for instructions on creating nodes. But what if there is no kube-apiserver? What if there is no master or cluster at all? In such cases, the kubelet can manage its node independently. The kubelet knows how to create pods, even without a kube-apiserver.
+</p>
+
+<h2>Configuration</h2>
+<p>
+    You can configure the kubelet to read the pod definition files from a designated directory, such as <code>/etc/kubernetes/manifests</code>. The kubelet periodically checks this directory for files, reads them, creates the pods, and monitors them. If a pod crashes, the kubelet will recreate it. Removing the definition file from the directory will automatically delete the pod.
+</p>
+<p>
+    These pods, created by the kubelet on its own without intervention from the API server, are called <strong>static pods</strong>. You cannot create deployments or other Kubernetes objects with static pods; only pods are supported.
+</p>
+<br/>
+<div align="center">
+    <img src="https://github.com/user-attachments/assets/0380e4be-9cb7-4dd0-9c99-ebf9d3b655b9" width="800"/>
+</div>
+<br/>
+
+
+<h2>Behavior</h2>
+<p>
+    If there is a Kubernetes cluster with static pods, running <code>kubectl get pods</code> will show a read-only mirror of the pod. You can describe it, but you cannot delete or edit it.
+</p>
+
+<h2>Usage of Static Pods</h2>
+<p>
+    Static pods are used to deploy master components. This is how tools like kubeadm set up clusters. Static pods appear in the cluster with the node name appended.
+</p>
+
+<h2>Managing Static Pods</h2>
+<p>
+    The kubelet runs on the controller node as a service. You can check for options of the service using <code>ps -aux</code> or by searching for static pod options in the config file.
+</p>
+
+<br/>
+<div align="center">
+    <img src="https://github.com/user-attachments/assets/0400e83f-ac70-419b-b21e-5573f3dfd68c" width="800"/>
+</div>
+<br/>
+<h2>Deleting a Static Pod</h2>
+<ol>
+    <li>
+         Identify the node where the static pod is created:
+         <pre><code>kubectl get pods --all-namespaces -o wide | grep static-greenbox</code></pre>
+    </li>
+    <li>
+         SSH to the node and identify the path configured for static pods in the kubelet configuration file:
+         <pre><code>ssh node01
+ps -ef | grep /usr/bin/kubelet
+grep -i staticPod /var/lib/kubelet/config.yaml</code></pre>
+        In this example, the staticPodPath is <code>/etc/just-to-mess-with-you</code>.
+    </li>
+    <li>
+         Navigate to this directory and delete the YAML file:
+         <pre><code>rm -rf /etc/just-to-mess-with-you/greenbox.yaml</code></pre>
+     </li>
+    <li>
+        Exit the node and check if the static-greenbox pod has been deleted:
+        <pre><code>kubectl get pods --all-namespaces -o wide | grep static-greenbox</code></pre>
+    </li>
+</ol>
+
+<h2>Scheduling Queue and Priorities</h2>
+<p>
+     When pods are created, they wait in a scheduling queue until they are scheduled. This queue has priorities, which can be set in the pod YAML file. First, you need to create a priority class.
+</p>
+
+
+
+
+<br/>
+<hr/>
+<hr/>
+
+
+
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -689,6 +809,168 @@ spec:
 <p>
     In fact, you often use a combination of node affinity and taints/tolerations to ensure your node hosts your Pods only.
 </p>
+
+
+
+
+<br/>
+<hr/>
+<hr/>
+
+<h1>🐳 Resource Requests</h1>
+<p>
+     Resource requests are a way to specify the minimum amount of CPU and memory resources that a container in a Pod should have. Here’s a bit more detail:
+</p>
+
+<h2>Resource Requests</h2>
+<h3>Purpose</h3>
+<p>
+     Resource requests ensure that a container has the minimum amount of resources it needs to run efficiently. They are used by the Kubernetes scheduler to decide which node to place the Pod on.
+</p>
+<h3>CPU Requests</h3>
+<p>
+    The minimum amount of CPU a container requires. It is measured in CPU units. One CPU, in Kubernetes, is equivalent to 1 vCPU/Core for cloud providers, 1 hyperthread on bare-metal Intel processors, or 1 AWS vCPU.
+</p>
+<h3>Memory Requests</h3>
+<p>
+    The minimum amount of memory a container needs, measured in bytes (MiB, GiB).
+</p>
+
+<h2>How to Define Resource Requests</h2>
+<p>
+     Resource requests are defined in the Pod or container specification using the <code>resources</code> field in a YAML file. Here’s an example:
+</p>
+<pre><code>
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod
+spec:
+  containers:
+  - name: example-container
+    image: nginx
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "250m"
+</code></pre>
+<p>
+     In this example:
+</p>
+<ul>
+    <li>The container requests a minimum of 64 MiB of memory.</li>
+    <li>The container requests a minimum of 250 milliCPUs (0.25 CPU).</li>
+</ul>
+
+<h2>Importance of Resource Requests</h2>
+<h3>Scheduling</h3>
+<p>
+    Kubernetes uses resource requests to schedule Pods onto nodes that have enough available resources.
+</p>
+<h3>QoS Classes</h3>
+<p>
+     Pods are classified into different Quality of Service (QoS) classes based on their resource requests and limits. This classification affects the scheduling and eviction behavior of the Pods.
+</p>
+<p>
+     By default, in Kubernetes, there are no restrictions on using CPU or memory. When you use requests, you allocate the requests for the Pod, even if the Pod doesn't really need it or consume it.
+</p>
+
+
+<br/>
+<div align="center">
+       <img src="https://github.com/user-attachments/assets/ed289db4-319e-41d9-98aa-2b00a820523f" width="800"/>
+</div>
+<br/>
+
+
+<br/>
+<hr/>
+<hr/>
+
+<h1>🐳 LimitRange</h1>
+    
+<h2>Purpose</h2>
+<p>
+     A <strong>LimitRange</strong> sets default values for resource requests and limits if they are not specified by the user. It ensures that all pods and containers have defined resource boundaries, promoting better resource utilization and avoiding resource contention.
+</p>
+    
+<h2>Scope</h2>
+<p>
+    Applied at the namespace level. Each namespace can have its own LimitRange.
+</p>
+    
+<h2>Types of Constraints</h2>
+<ul>
+     <li><strong>Minimum and Maximum Requests:</strong> Specifies the minimum and maximum CPU and memory that a container can request.</li>
+     <li><strong>Default Requests and Limits:</strong> Sets default values for CPU and memory requests and limits if they are not specified.</li>
+     <li><strong>Resource Limits:</strong> Ensures that no container can exceed these limits for CPU and memory.</li>
+</ul>
+    
+<h2>Example LimitRange YAML</h2>
+<p>Here's an example of how to define a LimitRange in a YAML file:</p>
+<pre><code>
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: example-limitrange
+  namespace: example-namespace
+spec:
+  limits:
+  - max:
+      cpu: "2"
+      memory: "1Gi"
+    min:
+      cpu: "200m"
+      memory: "100Mi"
+    default:
+      cpu: "500m"
+      memory: "200Mi"
+    defaultRequest:
+      cpu: "300m"
+      memory: "100Mi"
+    type: Container
+    </code></pre>
+    
+<p>In this example:</p>
+<ul>
+    <li><strong>max:</strong> The maximum CPU is set to 2 CPUs and memory to 1 GiB.</li>
+    <li><strong>min:</strong> The minimum CPU is set to 200 milliCPUs and memory to 100 MiB.</li>
+    <li><strong>default:</strong> Sets the default CPU request to 500 milliCPUs and memory to 200 MiB.</li>
+    <li><strong>defaultRequest:</strong> Sets the default CPU request to 300 milliCPUs and memory to 100 MiB.</li>
+</ul>
+    
+<h2>Importance of LimitRange</h2>
+<ul>
+    <li><strong>Resource Efficiency:</strong> Helps in efficient utilization of resources by ensuring that every pod/container has an appropriate amount of resources allocated.</li>
+    <li><strong>Stability:</strong> Prevents a single pod/container from consuming excessive resources, which can impact the performance of other workloads in the namespace.</li>
+    <li><strong>Consistency:</strong> Provides a consistent environment by setting default values for resource requests and limits.</li>
+</ul>
+    
+<h2>Usage</h2>
+<p>To create a LimitRange, use the following command:</p>
+<pre><code>kubectl create -f &lt;filename&gt;.yaml</code></pre>
+<p>To view LimitRanges in a namespace, use:</p>
+<pre><code>kubectl get limitrange -n &lt;namespace&gt;</code></pre>
+    
+<p>
+     By using LimitRange, you can ensure that your Kubernetes clusters run smoothly, with balanced resource allocation and utilization.
+</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
