@@ -2,6 +2,7 @@
     <img src="https://readme-typing-svg.herokuapp.com/?font=Righteous&size=35&center=true&vCenter=true&width=500&height=70&duration=4000&lines=Deed+Dive+on+Kubernetes!;" />
 </h1>
 
+
 <h3 align="center">A Deep Dive into Kubernetes Architecture and Components</h3>
  
 <div align="center">
@@ -31,14 +32,14 @@ Kubernetes interacts with Docker through a middleware utility called **dockershi
 <br/>
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/57d55129-cd1f-49b4-9f7c-31d583a00d56" width="800"/>
+  <img src="https://github.com/user-attachments/assets/57d55129-cd1f-49b4-9f7c-31d583a00d56" width="600"/>
 </div>
 
 <br/>
 <hr/>
 <hr/>
 
-<!DOCTYPE html>
+
 <html>
 <head>
     
@@ -110,7 +111,6 @@ Kubernetes interacts with Docker through a middleware utility called **dockershi
 <br/>
 <hr/>
 <hr/>
-<!DOCTYPE html>
 <html>
 <head>
 </head>
@@ -141,7 +141,6 @@ Kubernetes interacts with Docker through a middleware utility called **dockershi
 <br/>
 <hr/>
 <hr/>
-<!DOCTYPE html>
 <html>
 <head>
 </head>
@@ -209,7 +208,6 @@ Kubernetes interacts with Docker through a middleware utility called **dockershi
 <br/>
 <hr/>
 <hr/>
-<!DOCTYPE html>
 <html>
 <head>
 </head>
@@ -238,7 +236,6 @@ Kubernetes interacts with Docker through a middleware utility called **dockershi
 <hr/>
 <hr/>
 
-<!DOCTYPE html>
 <html>
 <head>
 </head>
@@ -257,5 +254,196 @@ Kubernetes interacts with Docker through a middleware utility called **dockershi
     </ul>
 </body>
 </html>
+
+
+
+
+<br/>
+<hr/>
+<hr/>
+
+
+<html>
+<head>
+</head>
+<body>
+    <h1>🐳 Kubernetes Pods</h1>
+    <p>
+        Containers are encapsulated into a Kubernetes object known as Pods. If you need to scale your application, 
+        you would create additional Pods. In a multi-container Pod, the containers are not of the same kind; 
+        these are called sidecar containers, responsible for performing supporting tasks for the main application.
+    </p>
+    <p>
+        Pods by default share the same storage, network namespace, and fate (they are created together and destroyed together).
+    </p>
+    <p>
+        When you run <code>kubectl run nginx --image nginx</code>, it will pull the nginx image from Docker Hub.
+    </p>
+    <p>
+        You can configure Kubernetes to pull images from Docker Hub or a private repository within your organization.
+    </p>
+    <h2>Useful Commands</h2>
+    <ul>
+        <li><code>kubectl create -f file-name.yml</code></li>
+        <li><code>kubectl get pods</code></li>
+        <li><code>kubectl describe pod pod-name</code></li>
+    </ul>
+</body>
+</html>
+
+
+
+
+<br/>
+<hr/>
+<hr/>
+
+
+
+<html>
+<head>
+</head>
+<body>
+    <h1>🐳 Replica Set</h1>
+    <p>
+        The <strong>Replica Set</strong> is the newer technology that replaces the older Replication-Controller. It manages the replica sets and ensures that the desired number of pods are running within the Kubernetes cluster.
+    </p>
+    <h2>Replica Set File Definition</h2>
+    <p>
+        One key difference between the Replication Controller and the Replica Set is the use of the selector. The selector allows managing pods with this selector even if the pods exist outside of the replica set and were created before the replica set.
+    </p>
+    <p>
+        The Replica Set is a process that monitors the state of pods. It identifies which pods to monitor in the cluster based on the selector.
+    </p>
+<br/>
+<div align="center">
+    <img src="https://github.com/user-attachments/assets/7c65f51c-5554-4d56-84db-e20c445805c4" width="800"/>
+</div>
+<br/>
+    <h2>Scaling Pods</h2>
+    <p>
+        To scale in or out the number of pods in the replica set, change it in the yaml file and use the following command:
+    </p>
+    <pre><code>kubectl replace -f file-name.yml</code></pre>
+    
+    
+
+
+
+<h2>Editing Existing Objects</h2>
+<p>
+    If you need to edit an existing running object in Kubernetes, use the following command:
+</p>
+  <pre><code>kubectl edit object-type object-name</code></pre>
+<p>
+   This approach is useful when you don't have the running object's file and need to update it. After editing, delete the pods, and Kubernetes will recreate them with the updated configuration.
+</p>
+</body>
+</html>
+
+
+
+
+<br/>
+<hr/>
+<hr/>
+
+
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+    <h1>🐳 Deployments</h1>
+    <p>
+        Kubernetes <strong>Deployments</strong> provide powerful capabilities, such as rolling updates, rollbacks, and upgrades, ensuring your applications run smoothly and stay up-to-date.
+    </p>
+    <p>
+        Deployments work in conjunction with Replica Sets, forming a layered approach. When you deploy a Deployment, it automatically manages the associated Replica Set. You can verify this by running the <code>kubectl get replicaset</code> command, which will display the Replica Set created by the Deployment.
+    </p>
+    <h2>Creating Templates</h2>
+    <p>
+        For the exam, please use the following commands to create templates for pods or deployments:
+    </p>
+    <ul>
+        <li><code>kubectl run nginx --image=nginx --dry-run=client -o yaml</code></li>
+        <li><code>kubectl create deployment --image=nginx nginx --dry-run=client -o yaml</code></li>
+    </ul>
+</body>
+</html>
+
+<br/>
+<div align="center">
+    <img src="https://github.com/user-attachments/assets/2243b921-3b68-42b0-8b83-75aae97cb877" width="800"/>
+</div>
+<br/>
+
+
+
+
+<br/>
+<hr/>
+<hr/>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Services in Kubernetes</title>
+</head>
+<body>
+    <h1 align="center">🐳 Services</h1>
+    <p>
+        Kubernetes <strong>Services</strong> provide a virtual IP for stable communication between components in an application. When a pod is destroyed and recreated, its IP address changes. To ensure consistent communication, Kubernetes creates an object called a service.
+    </p>
+    <h2>Types of Services</h2>
+    <ul>
+        <li>
+            <strong>NodePort Service:</strong> This service listens to a port on the node and forwards requests to the pods. It provides external access to the application but is not recommended for production environments.
+            <ul>
+                <li>
+                    Port on the pod (target port)
+                </li>
+                <li>
+                    Port on the service (port) with its own IP address, called the cluster IP
+                </li>
+                <li>
+                    Port on the node, which should be within the range 30,000 to 32,767
+                </li>
+            </ul>
+            <p>
+                Labels and selectors are used to link services to the targeted pods. Each node in the cluster exposes the NodePort, allowing access to the pods from any node using its IP.
+            </p>
+            <br/>
+            <div align="center">
+                <img src="https://github.com/user-attachments/assets/e26594ac-c592-4d6d-9330-899125810906" width="800"/>
+            </div>
+            <br/>
+        </li>
+        <li>
+            <strong>Cluster IP Service:</strong> This service creates a virtual IP inside the cluster, enabling communication between services such as frontend, backend, and database servers.
+        </li>
+        <li>
+            <strong>LoadBalancer Service:</strong> This service provisions a load balancer for applications in cloud providers, distributing load across different web servers. Even if your apps are deployed on just two nodes, they can be accessed using all nodes in the cluster. To achieve a single URL for end users, a cloud-native load balancer is recommended.
+        </li>
+    </ul>
+    <br/>
+    <div align="center">
+        <img src="https://github.com/user-attachments/assets/02d9a3b2-677a-4085-9228-877c5a8e7809" width="800"/>
+    </div>
+    <br/>
+    <h2>Default Service</h2>
+    <p>
+        The default service created when Kubernetes is launched is:
+    </p>
+    <pre><code>kubernetes   ClusterIP   10.43.0.1    &lt;none&gt;        443/TCP   5m17s</code></pre>
+</body>
+</html>
+
+
+
+
+
+
+
 
 
