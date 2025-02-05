@@ -575,3 +575,120 @@ spec:
 
 
 
+
+<br/>
+<hr/>
+<hr/>
+
+
+
+
+
+
+<h1>🐳 Kubernetes Scheduler, Labels, Taints, and Selectors</h1> 
+
+<h2>Kubernetes Scheduler</h2>
+ <p>
+       The Kubernetes <strong>scheduler</strong> is responsible for placing Pods onto Nodes. It watches for newly created Pods that have no Node assigned. For each Pod, it finds the best Node to run it on.
+ </p>
+<h3>Default Scheduler</h3>
+<p>
+    Kubernetes comes with a default scheduler called <code>kube-scheduler</code>. It selects an optimal node based on various factors like resource requirements, hardware/software constraints, and affinity/anti-affinity specifications.
+</p>
+<h3>Steps</h3>
+<p>
+       The scheduler performs two main steps:
+ </p>
+  <ul>
+      <li><strong>Filtering:</strong> Finds Nodes where it's feasible to schedule the Pod.</li>
+      <li><strong>Scoring:</strong> Ranks these Nodes to pick the best one.</li>
+ </ul>
+<h3>Custom Schedulers</h3>
+<p>
+      You can implement your own scheduler if the default one doesn't meet your needs. Multiple schedulers can run simultaneously.
+ </p>
+ <p>
+     If the Pod status is pending, there might be a problem scheduling the Pod on a specific Node. In such cases, you can manually specify the node using <code>nodeName: name-of-the-node</code> in the spec field.
+ </p>
+
+<h2>Labels and Selectors</h2>
+<p>
+    Labels and selectors are mechanisms used to bind resources together in Kubernetes.
+</p>
+<p>
+       <strong>Example:</strong> You can get Pods with <code>--selector app=App1</code>.
+</p>
+
+<h2>Taints and Tolerations</h2>
+ <p>
+  <strong>Taints on Nodes:</strong> Taints prevent unwanted Pods from landing on the node unless the Pod has a matching toleration.
+</p>
+ <p>
+   Taints and tolerations don't tell the Pod to go to a particular node; they tell the node to only accept Pods with certain tolerations.
+</p>
+ <p>
+      If you need to restrict a Pod from landing on a particular node, use the concept of node and pod affinity.
+</p>
+<p>
+      To see the taints, use this command:
+</p>
+<pre><code>kubectl describe node kubemaster | grep Taint</code></pre>
+ <p>
+     To delete a taint from a node, use this command:
+</p>
+<pre><code>kubectl taint nodes controlplane node-role.kubernetes.io/control-plane:NoSchedule-</code></pre>
+<br/>
+ <p>
+     Pod Definition with Toleration:
+</p>
+<pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-pod
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx
+  tolerations:
+  - key: "app"
+    operator: "Equal"
+    value: "blue"
+    effect: "NoSchedule"
+    
+</code></pre>
+
+<br/>
+<div align="center">
+       <img src="https://github.com/user-attachments/assets/ac1d6e64-1e90-4388-9642-0f1f2a6a58ef" width="800"/>
+</div>
+<br/>
+
+<h2>Node Selectors</h2>
+<p>
+      Node selectors are used to host a Pod on a specific node.
+</p>
+<p>
+    Limitations exist when using node selectors and labels, such as needing to host your Pod on a large or medium node and not a small node. For this, you use node affinity.
+</p>
+
+
+<br/>
+<div align="center">
+       <img src="https://github.com/user-attachments/assets/23bd50a3-0f86-4b35-8868-21f5a5b4c543" width="800"/>
+</div>
+<br/>
+
+
+<h2>Node Affinity</h2>
+ <p>
+    Node affinity ensures that Pods are hosted on specific nodes based on criteria.
+ </p>
+<p>
+     The <code>Exists</code> operator doesn't need a value.
+</p>
+<p>
+    In fact, you often use a combination of node affinity and taints/tolerations to ensure your node hosts your Pods only.
+</p>
+
+
+
