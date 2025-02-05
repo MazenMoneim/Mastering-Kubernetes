@@ -388,10 +388,9 @@ Kubernetes interacts with Docker through a middleware utility called **dockershi
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Services in Kubernetes</title>
 </head>
 <body>
-    <h1 align="center">🐳 Services</h1>
+    <h1 >🐳 Services</h1>
     <p>
         Kubernetes <strong>Services</strong> provide a virtual IP for stable communication between components in an application. When a pod is destroyed and recreated, its IP address changes. To ensure consistent communication, Kubernetes creates an object called a service.
     </p>
@@ -415,7 +414,7 @@ Kubernetes interacts with Docker through a middleware utility called **dockershi
             </p>
             <br/>
             <div align="center">
-                <img src="https://github.com/user-attachments/assets/e26594ac-c592-4d6d-9330-899125810906" width="800"/>
+                <img src="https://github.com/user-attachments/assets/e26594ac-c592-4d6d-9330-899125810906" width="600"/>
             </div>
             <br/>
         </li>
@@ -428,7 +427,7 @@ Kubernetes interacts with Docker through a middleware utility called **dockershi
     </ul>
     <br/>
     <div align="center">
-        <img src="https://github.com/user-attachments/assets/02d9a3b2-677a-4085-9228-877c5a8e7809" width="800"/>
+        <img src="https://github.com/user-attachments/assets/02d9a3b2-677a-4085-9228-877c5a8e7809" width="700"/>
     </div>
     <br/>
     <h2>Default Service</h2>
@@ -440,6 +439,69 @@ Kubernetes interacts with Docker through a middleware utility called **dockershi
 </html>
 
 
+<br/>
+<hr/>
+<hr/>
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+    <h1>🐳 Namespaces</h1>
+    <p>
+        <strong>Namespaces</strong> are an isolation technique used to isolate projects from each other within a Kubernetes cluster.
+    </p>
+    <h2>Types of Namespaces</h2>
+    <ul>
+        <li>Default</li>
+        <li>Kube-system</li>
+        <li>Kube-public</li>
+    </ul>
+    <h2>Accessing Services Across Namespaces</h2>
+    <p>
+        When a web application needs to access a database in another namespace, use the following format:
+    </p>
+    <pre><code>Mysql.connect("db-service.dev.svc.cluster.local")</code></pre>
+    <p>
+        Format: <code>Service-name.Namespace.Service.Domain-name-of-the-cluster</code>
+    </p>
+    <h2>Creating a Namespace</h2>
+    <p>
+        To create a namespace, use the following command:
+    </p>
+    <pre><code>kubectl create namespace dev</code></pre>
+    <h2>Setting a Default Namespace</h2>
+    <p>
+        If you need to work in a specific namespace permanently, switch to it and run this command:
+    </p>
+    <pre><code>kubectl config set-context $(kubectl config current-context) --namespace=dev</code></pre>
+    <h2>Resource Quotas</h2>
+    <p>To limit resources in a namespace, create a resource quota using the following configuration:</p>
+    <pre><code>
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: compute-quota
+  namespace: dev
+spec:
+  hard:
+    pods: "10"
+    requests.cpu: "4"
+    requests.memory: 5Gi
+    limits.cpu: "10"
+    limits.memory: 10Gi
+    </code></pre>
+    <h2>Switching Namespaces</h2>
+    <p>
+        To switch the namespace, use the following command:
+    </p>
+    <pre><code>kubectl config set-context --current --namespace=K21</code></pre>
+</body>
+</html>
 
 
 
