@@ -560,12 +560,41 @@ grep -i staticPod /var/lib/kubelet/config.yaml</code></pre>
 </html>
 
 
+
+<h1>🐳 Ingress</h1>
+
+<h2>Overview</h2>
+<p>Ingress in Kubernetes helps your users access your application using a single externally accessible URL. It allows you to configure routing to different services within your cluster based on the URL path, and it also supports SSL security.</p>
+
+<h2>Ingress as a Load Balancer</h2>
+<p>Think of Ingress as a layer seven load balancer built into the Kubernetes cluster. It provides advanced routing capabilities based on HTTP/HTTPS requests.</p>
+
+<h2>Ingress Controller</h2>
+<p>An Ingress Controller is like a load balancer that users can access. There are several solutions available, such as NGINX, Istio, HAProxy, and Traefik. These controllers have additional intelligence built into them to monitor the Kubernetes cluster for new definitions or ingress resources.</p>
+<p>We deploy the Ingress Controller as a deployment in the Kubernetes cluster. These solutions are not deployed by default in the Kubernetes cluster and must be deployed manually.</p>
+
+<br/>
+<div align="center">
+    <img src="https://github.com/user-attachments/assets/fbe0773e-95fc-4ac8-a154-3184f4b71744" width="700"/>
+</div>
+<br/>
+
+<br/>
+<div align="center">
+    <img src="https://github.com/user-attachments/assets/d556b95a-c053-48e4-b29b-15de55b998f0" width="700"/>
+</div>
+<br/>
+<br/>
+<div align="center">
+    <img src="https://github.com/user-attachments/assets/e98e4314-5ed7-465d-bb33-e6843c550b41" width="700"/>
+</div>
+<br/>
+
+
+
 <br/>
 <hr/>
 <hr/>
-
-
-
 
 <!DOCTYPE html>
 <html>
@@ -1655,7 +1684,7 @@ spec:
 <div align="center">
        <img src="https://github.com/user-attachments/assets/579c547f-3ec6-4e85-8924-18ce3e42fd70" width="800"/>
 </div>
-<br/
+<br/>
 
 
 <h2>Default Location</h2>
@@ -1674,5 +1703,460 @@ spec:
 
 
 
+<br/>
+<hr/>
+<hr/>
+
+
+
+
+
+
+
+<h1>🐳 Roles and RoleBindings</h1>
+
+<h2>Overview</h2>
+<p>In Kubernetes, Roles define the permissions to perform specific actions on resources, while RoleBindings link users or groups to the roles created.</p>
+
+<h2>Roles</h2>
+<p>Roles specify the objects and the actions that can be performed on them. To view roles in your cluster, use the following command:</p>
+<pre><code>kubectl get roles</code></pre>
+
+<h2>RoleBindings</h2>
+<p>RoleBindings associate users or groups with the defined roles, effectively granting them the specified permissions. To view role bindings in your cluster, use the following command:</p>
+<pre><code>kubectl get rolebindings</code></pre>
+
+
+<br/>
+<div align="center">
+       <img src="https://github.com/user-attachments/assets/e2f9329a-46c4-4d47-b9c8-1ed83ba7d78c" width="800"/>
+</div>
+<br/>
+
+
+<h2>Describing a Role</h2>
+<p>To get detailed information about a specific role, use the following command:</p>
+<pre><code>kubectl describe role developer</code></pre>
+
+
+
+<br/>
+<hr/>
+<hr/>
+
+
+
+<h1>🐳 Kubernetes Permissions</h1>
+
+<h2>Checking Permissions for Specific Actions on Objects</h2>
+<p>To check whether a specific action on an object is permitted, use the following commands:</p>
+<pre><code>
+kubectl auth can-i create deployments  # yes
+kubectl auth can-i delete nodes  # no
+</code></pre>
+
+<h2>Specifying Access for a Specific User</h2>
+<p>To specify access permissions for a specific user, use the appropriate <code>kubectl auth</code> commands to verify their permissions.</p>
+
+<h2>Specifying Access to a Specific Object Name</h2>
+<p>To specify access to a specific object name, ensure you define roles and role bindings that grant the required permissions to the user or group.</p>
+
+
+<br/>
+<hr/>
+<hr/>
+
+
+
+<h1>🐳 Cluster Roles and ClusterRoleBindings</h1>
+
+<h2>Overview</h2>
+<p>Cluster Roles and ClusterRoleBindings in Kubernetes function similarly to Roles and RoleBindings but apply to cluster-wide permissions. This means they grant access to resources across the entire cluster, not just within a specific namespace.</p>
+
+<h2>Cluster Roles</h2>
+<p>Cluster Roles define the permissions to perform specific actions on cluster-scoped resources. These roles can also be created for namespace-scoped resources, granting the user access to all resources in all namespaces.</p>
+
+<h2>ClusterRoleBindings</h2>
+<p>ClusterRoleBindings associate users or groups with Cluster Roles, effectively granting them the specified cluster-wide permissions.</p>
+
+
+
+
+
+<br/>
+<hr/>
+<hr/>
+
+
+
+
+
+
+<h1>🐳 Service Accounts</h1>
+
+<h2>Overview</h2>
+<p>A Service Account in Kubernetes is an account used by an application to interact with a Kubernetes cluster. It allows the application to authenticate with the API server and access resources within the cluster.</p>
+
+<h2>Creating a Service Account</h2>
+<p>When you create a Service Account using the following command, a token is automatically generated:</p>
+<pre><code>kubectl create serviceaccount &lt;name-of-it&gt;</code></pre>
+
+
+
+<br/>
+<hr/>
+<hr/>
+
+
+
+
+
+
+
+
+
+<h1>🐳 Images in Kubernetes</h1>
+<p>In Kubernetes, images are often stored in private repositories to enhance security and control access. Here’s how you can use images from private repositories in your Kubernetes cluster:</p>
+
+<h2>Step 1: Create a Docker Registry Secret</h2>
+<p>Create a Docker registry secret that contains the credentials required to access the private repository. This can be done using the following command:</p>
+<pre><code>
+kubectl create secret docker-registry myregistrykey --docker-server=&lt;DOCKER_REGISTRY_SERVER&gt; --docker-username=&lt;USERNAME&gt; --docker-password=&lt;PASSWORD&gt; --docker-email=&lt;EMAIL&gt;
+</code></pre>
+<ul>
+    <li>&lt;DOCKER_REGISTRY_SERVER&gt; is the URL of your private Docker registry.</li>
+    <li>&lt;USERNAME&gt; is your Docker registry username.</li>
+    <li>&lt;PASSWORD&gt; is your Docker registry password.</li>
+    <li>&lt;EMAIL&gt; is your Docker registry email.</li>
+</ul>
+
+<h2>Step 2: Reference the Secret in Your Pod Specification</h2>
+<p>Include the secret in your pod specification under the <code>imagePullSecrets</code> section:</p>
+<pre><code>
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  containers:
+  - name: mycontainer
+    image: &lt;DOCKER_REGISTRY_SERVER&gt;/&lt;IMAGE_NAME&gt;:&lt;TAG&gt;
+  imagePullSecrets:
+  - name: myregistrykey
+</code></pre>
+<p>&lt;DOCKER_REGISTRY_SERVER&gt;/&lt;IMAGE_NAME&gt;:&lt;TAG&gt; is the image path and tag in your private repository.</p>
+<p>This configuration ensures that Kubernetes will use the provided credentials to pull the image from the private repository.</p>
+
+<h2>Step 3: Verify Access</h2>
+<p>Deploy the pod and verify that it is able to pull the image from the private repository without any issues.</p>
+
+</body>
+</html>
+
+
+
+<br/>
+<div align="center">
+       <img src="https://github.com/user-attachments/assets/52600dbe-c996-425b-9a15-e0005b6ff7a5" width="800"/>
+</div>
+<br/>
+
+<br/>
+<hr/>
+<hr/>
+
+
+
+<h1>🐳 Network Policies</h1>
+<p>Network Policies in Kubernetes are used to control the communication between pods. By default, all pods can communicate with each other within the same cluster. Network Policies allow you to specify how groups of pods are allowed to communicate with each other and other network endpoints.</p>
+
+<h2>Defining a Network Policy</h2>
+<p>A Network Policy is defined using a YAML file. Here’s an example of a simple Network Policy:</p>
+<pre><code>
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: example-network-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      role: db
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          role: frontend
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          role: frontend
+</code></pre>
+<p>In this example:</p>
+<ul>
+  <li>The Network Policy named <code>example-network-policy</code> applies to the <code>default</code> namespace.</li>
+  <li>It selects pods with the label <code>role: db</code>.</li>
+  <li>It specifies both ingress and egress rules.</li>
+  <li>Only pods with the label <code>role: frontend</code> can communicate with the selected pods.</li>
+</ul>
+
+<h2>Applying a Network Policy</h2>
+<p>To apply a Network Policy, save the YAML file and use the following command:</p>
+<pre><code>kubectl apply -f example-network-policy.yaml</code></pre>
+
+<h2>Types of Network Policies</h2>
+<ul>
+  <li><strong>Ingress Policy:</strong> Controls incoming traffic to the pods.</li>
+  <li><strong>Egress Policy:</strong> Controls outgoing traffic from the pods.</li>
+</ul>
+
+<h2>Best Practices</h2>
+<ul>
+  <li><strong>Least Privilege Principle:</strong> Apply the principle of least privilege by allowing only necessary communication between pods.</li>
+  <li><strong>Test Policies:</strong> Test network policies in a staging environment before applying them in production.</li>
+  <li><strong>Monitor Traffic:</strong> Use monitoring tools to ensure that the network policies are working as expected and not causing unintended disruptions.</li>
+</ul>
+
+
+
+<br/>
+<hr/>
+<hr/>
+
+
+
+
+
+
+<h1>🐳 Multi-Node Cluster in Kubernetes</h1>
+
+<h2>API Server</h2>
+<p>The API Server can be configured in an active-active status across nodes. A front-line load balancer can be set up to point to the three API servers, distributing the traffic among them.</p>
+
+<h2>Controller Manager and Scheduler</h2>
+<p>The Controller Manager and Scheduler are configured in an active-standby status. Through an election process, only one instance is active at a time.</p>
+
+<h2>ETCD</h2>
+<ul>
+    <li>When reading from the ETCD cluster, you can read from any node in the cluster.</li>
+    <li>For writing data, only one node is responsible for write operations. The nodes elect a leader to manage the writes, while the other nodes act as followers.</li>
+    <li>The leader ensures that the writes are distributed to other instances in the cluster. A write operation is only considered complete if the leader gets consent from other members in the cluster.</li>
+    <li>The nodes use the RAFT protocol for leader election, which employs random timers for initiating requests.</li>
+    <li>Quorum is the minimum number of nodes needed in the cluster to function properly or make a successful write. For a cluster of 3 nodes, the quorum is 2, calculated as Q = N/2 + 1.</li>
+</ul>
+
+</body>
+</html>
+
+
+
+
+
+
+<br/>
+<hr/>
+<hr/>
+
+
+
+<h1>🐳 Storage in Kubernetes</h1>
+<p>Storage in Kubernetes is designed to provide persistent and temporary storage solutions for applications running in the cluster. Here’s an overview of the different storage options available in Kubernetes:</p>
+
+<h2>Persistent Volumes (PVs)</h2>
+<p>Persistent Volumes are storage resources in the cluster that are provisioned by an administrator. They exist independently of pods and provide a way for users to request storage that persists beyond the lifecycle of individual pods.</p>
+<pre><code>
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: my-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /mnt/data
+</code></pre>
+
+<h2>Persistent Volume Claims (PVCs)</h2>
+<p>Persistent Volume Claims are requests for storage by a user. They specify the desired capacity and access modes. When a PVC is created, Kubernetes finds a suitable PV to bind it to.</p>
+<pre><code>
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+</code></pre>
+
+<h2>Dynamic Provisioning</h2>
+<p>Dynamic provisioning allows Kubernetes to automatically create a PV for a PVC, eliminating the need for an administrator to manually provision storage. This is achieved using StorageClasses.</p>
+<pre><code>
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: my-storage-class
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp2
+</code></pre>
+<pre><code>
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-dynamic-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: my-storage-class
+</code></pre>
+
+<h2>Configuring Volumes in Pods</h2>
+<p>Volumes are used to store data within a pod. Kubernetes supports several types of volumes, such as emptyDir, hostPath, and more.</p>
+<pre><code>
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  containers:
+  - name: my-container
+    image: nginx
+    volumeMounts:
+    - mountPath: /usr/share/nginx/html
+      name: my-volume
+  volumes:
+  - name: my-volume
+    emptyDir: {}
+</code></pre>
+
+<h2>Access Modes</h2>
+<p>Access Modes define how the PV can be mounted and accessed by pods. Common access modes include:</p>
+<ul>
+  <li><strong>ReadWriteOnce (RWO):</strong> The volume can be mounted as read-write by a single node.</li>
+  <li><strong>ReadOnlyMany (ROX):</strong> The volume can be mounted as read-only by many nodes.</li>
+  <li><strong>ReadWriteMany (RWX):</strong> The volume can be mounted as read-write by many nodes.</li>
+</ul>
+
+<h2>Storage Best Practices</h2>
+<ul>
+  <li><strong>Use PVCs:</strong> Always use Persistent Volume Claims to request storage rather than directly specifying PVs.</li>
+  <li><strong>Dynamic Provisioning:</strong> Leverage dynamic provisioning to simplify storage management.</li>
+  <li><strong>Backup:</strong> Regularly back up your persistent data to avoid data loss.</li>
+</ul>
+
+<h2>Additional Concepts</h2>
+<ul>
+  <li><strong>CRI (Container Runtime Interface):</strong> The standard that defines how Kubernetes communicates with container runtime engines like Docker or CRI.</li>
+  <li><strong>CNI (Container Network Interface):</strong> Extends support for different networking solutions.</li>
+  <li><strong>CSI (Container Storage Interface):</strong> Enables Kubernetes to work with different storage solutions.</li>
+</ul>
+
+<h2>HostPath in Volume Storage Type</h2>
+<p>A pod can be mounted to a specific file directory on a node using <code>hostPath</code>. However, it is not recommended in multi-node clusters because if the pod is recreated on another node, the data in the container will not be the same.</p>
+
+<h2>Administrator and Developer Roles</h2>
+<p>The administrator creates a set of persistent volumes, and developers create persistent volume claims to use the storage.</p>
+
+<h2>Using PVCs in Pod Definition</h2>
+<p>Once you create a PVC, use it in a pod definition file by specifying the PVC claim name under the <code>persistentVolumeClaim</code> section in the volumes section, like this:</p>
+<pre><code>
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  containers:
+  - name: my-container
+    image: nginx
+    volumeMounts:
+    - mountPath: /usr/share/nginx/html
+      name: my-volume
+  volumes:
+  - name: my-volume
+    persistentVolumeClaim:
+      claimName: my-pvc
+</code></pre>
+
+<h2>Access Mode Importance</h2>
+<p>Access mode is very important to ensure the PVC matches the PV. When you delete a PVC used by a pod, the pod will be stuck, and after you delete the pod, it will be deleted.</p>
+
+</body>
+</html>
+
+<br/>
+<div align="center">
+       <img src="https://github.com/user-attachments/assets/cb518274-2e4f-4f37-9c0b-dbd818dc71e2" width="800"/>
+</div>
+<br/>
+
+<br/>
+<div align="center">
+       <img src="https://github.com/user-attachments/assets/da479447-7f76-4c57-a16d-819eb00247aa" width="800"/>
+</div>
+<br/>
+<br/>
+<div align="center">
+       <img src="https://github.com/user-attachments/assets/300a77be-06ad-4870-9a3c-ac08c26a423e" width="800"/>
+</div>
+<br/>
+<br/>
+<div align="center">
+       <img src="https://github.com/user-attachments/assets/1c3a168f-bfa6-4262-965f-cfe8b0451af3" width="800"/>
+</div>
+<br/>
+
+
+
+<br/>
+<hr/>
+<hr/>
+
+
+
+<h1>🐳 Troubleshooting Issues in Kubernetes</h1>
+
+<h2>Connection Issues</h2>
+<ul>
+    <li><strong>Connection Refused:</strong> Check the user and password of the database and the deployment.</li>
+    <li><strong>Connection Refused:</strong> Verify the ports of the service and the pods.</li>
+    <li><strong>Access Denied:</strong> Ensure the database user is correctly configured.</li>
+    <li><strong>Error on Gateway:</strong> Check the port of the node in the service deployment file.</li>
+</ul>
+
+<h2>File Visibility Issues</h2>
+<ul>
+    <li>Ensure the file exists.</li>
+    <li>Check the permissions on the file.</li>
+    <li>Verify the mounts in the pod YAML (host paths).</li>
+</ul>
+
+<h2>Node Crash Issues</h2>
+<ul>
+    <li>Use <code>top</code> and <code>df</code> to check resource usage.</li>
+    <li>Check the status of the kubelet.</li>
+    <li>Use <code>journalctl -u kubelet</code> to review logs.</li>
+    <li>Verify the certificates are not expired and are issued by the correct CA using:<br/>
+        <pre><code>openssl x509 /var/lib/kubelet/worker01.crt -text</code></pre>
+    </li>
+    <li>Check <code>/var/lib/kubelet/config.yaml</code> for configuration issues.</li>
+    <li>Ensure the port of the control plane is correct in <code>/etc/kubernetes/kubelet.conf</code> (should be 6443).</li>
+</ul>
+
+
+
+</body>
+</html>
 
 
