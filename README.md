@@ -1360,3 +1360,181 @@ spec:
        <img src="https://github.com/user-attachments/assets/b979acb3-87c4-488b-b1c3-ad95100ed368" width="800"/>
 </div>
 <br/>
+
+
+
+<br/>
+<hr/>
+<hr/>
+
+
+<h1>🐳 Multi-Container Pods</h1>
+<p>In Kubernetes, it is possible to have pods that contain multiple containers. These multi-container pods share the same lifecycle, meaning they are created together and destroyed together. They also share the same storage and network namespace.</p>
+<p>For example, a multi-container pod may consist of a web container and a log container. The containers within the pod can communicate with each other using <code>localhost</code> and the port number on which the service is running.</p>
+
+
+<br/>
+<div align="center">
+       <img src="https://github.com/user-attachments/assets/1733e200-49f6-4eab-ae6c-39ce200b08af" width="800"/>
+</div>
+<br/>
+
+
+
+<br/>
+<hr/>
+<hr/>
+
+
+
+
+
+
+<h1>🐳 Cluster Maintenance in Kubernetes</h1>
+
+<h2>Node Down Scenario</h2>
+<p>If a node goes down in the cluster, the following actions occur:</p>
+<ul>
+    <li>If the node comes back online, the pods on it will also come back online.</li>
+    <li>If the node does not come back within 5 minutes, the pods are terminated. If the pods are part of a deployment or replicaset, they will be recreated on other nodes.</li>
+    <li>When the node comes back online, it will start without any pods scheduled on it.</li>
+</ul>
+
+<h2>Evacuating a Node for Maintenance</h2>
+<p>To evacuate a node from the workload for maintenance purposes, use the following command:</p>
+<pre><code>kubectl drain node-1</code></pre>
+<p>This command gracefully terminates the pods on the node and recreates them on another node. The node is also marked as unschedulable.</p>
+
+<h2>Reactivating a Node</h2>
+<p>When the node comes back online, run the following command to make it schedulable again:</p>
+<pre><code>kubectl uncordon node-1</code></pre>
+
+<h2>Additional Commands</h2>
+<p>To make a node unschedulable, preventing new pods from being scheduled on it, use the following command:</p>
+<pre><code>kubectl cordon node-1</code></pre>
+
+
+
+
+
+
+<br/>
+<hr/>
+<hr/>
+
+
+
+
+
+<h1>🐳 Kubernetes Releases</h1>
+
+<h2>Versioning</h2>
+<p>Kubernetes versions follow the pattern <code>V1.11.3</code>, where:</p>
+<ul>
+  <li><strong>Major Version:</strong> Significant changes and new features (e.g., V1).</li>
+  <li><strong>Minor Version:</strong> Introduces new features and functionality, released every few months (e.g., 11).</li>
+  <li><strong>Patch Version:</strong> Fixes bugs and issues, released more frequently (e.g., 3).</li>
+</ul>
+
+<h2>Version Compatibility</h2>
+<p>It is not mandatory to have the same version for all Kubernetes components in the cluster. However, no component should have a version higher than the kube-apiserver.</p>
+<p>Only the last three versions of Kubernetes are supported.</p>
+
+<h2>Cluster Upgrade Process</h2>
+<p>Upgrading a cluster involves two major steps:</p>
+<ul>
+  <li>Update the master nodes.</li>
+  <li>Update the worker nodes.</li>
+</ul>
+
+<h2>Master Node Failure</h2>
+<p>If the master node fails, management functions like delete, modify, and deploy new apps are unavailable. However, the workload remains available to users. If a pod in a deployment goes down, it will not be recreated automatically.</p>
+
+<h2>Node Upgrade</h2>
+<p>The nodes will not be upgraded until you manually update the kubelet service on each node. Restarting the service will update the versions on the nodes.</p>
+
+<h2>Preparation for Cluster Upgrade</h2>
+<p>Before upgrading a cluster, ensure that the repository and key are set correctly. Refer to the Kubernetes documentation for detailed instructions.</p>
+
+<h2>Backup Resources</h2>
+<p>To get a backup for all resources, use the following command:</p>
+<pre><code>kubectl get all --all-namespaces -o yaml > all-deploy-services.yaml</code></pre>
+
+
+
+
+
+<br/>
+<hr/>
+<hr/>
+
+
+
+<h1>🐳 Backup and Restore ETCD in Kubernetes</h1>
+
+<h2>Backing Up ETCD</h2>
+<p>To take a snapshot of the ETCD cluster, you can use the <code>etcdctl</code> utility. The API uses <code>https://127.0.0.1:2379</code> to access the ETCD database.</p>
+
+<h2>Stopping the API Service</h2>
+<p>Before performing certain operations, you may need to stop the API service.</p>
+
+<h2>Restoring the ETCD Cluster</h2>
+<p>To restore the ETCD cluster:</p>
+<ul>
+    <li>Run the <code>etcdctl</code> command as specified in the documentation.</li>
+    <li>Configure the ETCD service to use the new directory.</li>
+    <li>Restart the daemons and services, then start the kube-apiserver service.</li>
+</ul>
+
+<h2>Using <code>etcdctl</code> Options</h2>
+<p>Make sure to use the appropriate options when using <code>etcdctl</code>.</p>
+
+<h2>Restoring ETCD</h2>
+<p>To restore ETCD:</p>
+<ul>
+    <li>First, stop the kube-apiserver.</li>
+    <li>Move the kube-apiserver manifest from the Static Pod directory to another location. (To find the Static Pod directory, use <code>ps -aux | grep kubelet</code> and check the options.)</li>
+    <li>Run the <code>etcdctl</code> command and create a directory as specified in the documentation.</li>
+    <li>Update the <code>etcd.yaml</code> file with the new directory.</li>
+</ul>
+
+<h2>Kubectl Commands</h2>
+<p>To check the kubectl configuration file in the node, use:</p>
+<pre><code>kubectl config view</code></pre>
+<p>To switch contexts in Kubernetes, use:</p>
+<pre><code>kubectl config use-context &lt;name-of-the-context&gt;</code></pre>
+
+<h2>ETCD Configurations</h2>
+<ul>
+    <li><strong>Stacked ETCD:</strong> ETCD is stacked with Kubernetes components within the cluster.</li>
+    <li><strong>External ETCD:</strong> Configure the ETCD database on a separate server.</li>
+</ul>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
