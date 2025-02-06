@@ -959,10 +959,40 @@ spec:
 
 
 
+<br/>
+<hr/>
+<hr/>
 
 
 
 
+
+<h1>🐳 Monitors and Logging in Kubernetes</h1>
+    
+ <h2>Monitoring</h2>
+<p>
+    Monitoring involves tracking node-level metrics such as the number of nodes in the cluster, node health, CPU, memory, network, and disk utilization.
+</p>
+<h3>Popular Monitoring Solutions</h3>
+<p>
+    One of the most popular solutions for monitoring a Kubernetes cluster is the <strong>metrics server</strong>. The metrics server is an in-memory solution that does not store metrics on disk. If you need to monitor historical data, you will need an advanced solution.
+</p>
+<h3>cAdvisor</h3>
+<p>
+    The Kubelet also contains a subcomponent known as <strong>cAdvisor</strong> (Container Advisor). cAdvisor is responsible for retrieving performance metrics from pods and exposing them through the Kubelet API to make the metrics available to the metrics server.
+</p>
+<h3>Deployment</h3>
+<p>
+    Download the metrics server and deploy it as a deployment. Use the following commands to view metrics:
+</p>
+<pre><code>kubectl top node</code></pre>
+<pre><code>kubectl top pod</code></pre>
+
+<h2>Logging</h2>
+<p>
+    To see the logs of a pod, use the following command:
+</p>
+<pre><code>kubectl logs -f pod-name</code></pre>
 
 
 
