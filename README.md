@@ -1061,6 +1061,126 @@ spec:
 
 
 
+<h1>🐳 Environment Variables in Kubernetes</h1>
+<p>Environment variables (ENV Vars) in Kubernetes are used to pass configuration data to the containers running in a Pod. They allow you to customize the behavior of applications without changing the code. Here’s a detailed overview:</p>
+
+<h2>Defining Environment Variables</h2>
+<p>You can define environment variables in your Pod or container specifications using the <code>env</code> field in a YAML file. Here's an example:</p>
+<pre><code>
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod
+spec:
+  containers:
+  - name: example-container
+    image: nginx
+    env:
+    - name: ENV_VAR_NAME
+      value: "value"
+</code></pre>
+<p>In this example:</p>
+<ul>
+<li>The <code>ENV_VAR_NAME</code> is set to "value" in the container running in the <code>example-pod</code>.</li>
+</ul>
+
+<h2>Types of Environment Variables</h2>
+<h3>Static Environment Variables</h3>
+<p>These are defined with a fixed value directly in the Pod specification, as shown in the example above.</p>
+
+<h3>Dynamic Environment Variables</h3>
+<p>These can reference values from Kubernetes resources like ConfigMaps, Secrets, or downward APIs.</p>
+
+<p>Example with ConfigMap:</p>
+<pre><code>
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-configmap
+data:
+  CONFIG_VAR: "config-value"
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod
+spec:
+  containers:
+  - name: example-container
+    image: nginx
+    env:
+    - name: CONFIG_VAR
+      valueFrom:
+        configMapKeyRef:
+          name: example-configmap
+          key: CONFIG_VAR
+</code></pre>
+
+<h2>Using Secrets for Environment Variables</h2>
+<p>To store sensitive information, you can use Kubernetes Secrets:</p>
+<pre><code>
+apiVersion: v1
+kind: Secret
+metadata:
+  name: example-secret
+type: Opaque
+data:
+  SECRET_KEY: c2VjcmV0LXZhbHVl # base64 encoded value
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod
+spec:
+  containers:
+  - name: example-container
+    image: nginx
+    env:
+    - name: SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: example-secret
+          key: SECRET_KEY
+</code></pre>
+
+<h2>Using Downward API</h2>
+<p>The Downward API allows you to expose Pod and container fields as environment variables:</p>
+<pre><code>
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod
+spec:
+  containers:
+  - name: example-container
+    image: nginx
+    env:
+    - name: POD_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
+</code></pre>
+<p>In this example, the environment variable <code>POD_NAME</code> will hold the name of the Pod.</p>
+
+<h2>Best Practices</h2>
+<ul>
+<li><strong>Use ConfigMaps and Secrets:</strong> For better manageability and security, store non-sensitive and sensitive data in ConfigMaps and Secrets.</li>
+<li><strong>Keep it Simple:</strong> Avoid complex logic in environment variables; use them for simple configurations.</li>
+<li><strong>Base64 Encoding:</strong> Remember to encode sensitive values in Secrets using base64.</li>
+</ul>
+
+
+<br/>
+<div align="center">
+       <img src="https://github.com/user-attachments/assets/d01cc848-3dd9-43f1-9cac-443ab3fdd890" width="800"/>
+</div>
+<br/>
+
+
+
+<br/>
+<hr/>
+<hr/>
 
 
 
@@ -1069,6 +1189,174 @@ spec:
 
 
 
+<h1>🐳 ConfigMaps</h1>
+<p>ConfigMaps in Kubernetes are used to store configuration data in key-value pairs. This allows you to decouple configuration artifacts from image content to keep containerized applications portable. Here's a detailed overview:</p>
+
+<h2>Defining a ConfigMap</h2>
+<p>You can define a ConfigMap using a YAML file. Here’s an example:</p>
+<pre><code>
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-configmap
+data:
+  CONFIG_KEY: "config-value"
+  ANOTHER_KEY: "another-value"
+</code></pre>
+<p>In this example, <code>example-configmap</code> contains two keys, <code>CONFIG_KEY</code> and <code>ANOTHER_KEY</code>, with their respective values.</p>
+
+<h2>Using ConfigMaps in a Pod</h2>
+<p>To use a ConfigMap in a Pod, you reference the ConfigMap in the Pod’s specification. Here’s an example:</p>
+<pre><code>
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod
+spec:
+  containers:
+  - name: example-container
+    image: nginx
+    env:
+    - name: CONFIG_KEY
+      valueFrom:
+        configMapKeyRef:
+          name: example-configmap
+          key: CONFIG_KEY
+</code></pre>
+<p>In this example:</p>
+<ul>
+<li>The environment variable <code>CONFIG_KEY</code> in the container is populated with the value from the <code>example-configmap</code>.</li>
+</ul>
+
+<h2>Using ConfigMaps as Volume Mounts</h2>
+<p>ConfigMaps can also be mounted as volumes to provide configuration files to containers. Here’s an example:</p>
+<pre><code>
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod
+spec:
+  containers:
+  - name: example-container
+    image: nginx
+    volumeMounts:
+    - name: config-volume
+      mountPath: /etc/config
+  volumes:
+  - name: config-volume
+    configMap:
+      name: example-configmap
+</code></pre>
+<p>In this example:</p>
+<ul>
+<li>The <code>example-configmap</code> is mounted at <code>/etc/config</code> inside the container.</li>
+</ul>
+
+<h2>Best Practices</h2>
+<ul>
+<li><strong>Separate Configuration:</strong> Store configuration data separately from application code to make applications portable.</li>
+<li><strong>Version Control:</strong> Store ConfigMaps in version control systems (e.g., Git) to keep track of changes.</li>
+<li><strong>Secure Sensitive Data:</strong> Use Secrets instead of ConfigMaps for sensitive data.</li>
+</ul>
 
 
 
+<br/>
+<hr/>
+<hr/>
+
+
+
+
+
+<h1>🐳 Secrets</h1>
+<p>Secrets in Kubernetes are used to store sensitive information such as passwords, OAuth tokens, and SSH keys. Unlike ConfigMaps, which are intended for non-sensitive data, Secrets ensure that sensitive data is stored securely and is only accessible to authorized Pods.</p>
+
+<h2>Defining a Secret</h2>
+<p>You can define a Secret using a YAML file. Here’s an example:</p>
+<pre><code>
+apiVersion: v1
+kind: Secret
+metadata:
+  name: example-secret
+type: Opaque
+data:
+  USERNAME: dXNlcm5hbWU=  # base64 encoded value
+  PASSWORD: cGFzc3dvcmQ=  # base64 encoded value
+</code></pre>
+<p>In this example, <code>example-secret</code> contains two keys, <code>USERNAME</code> and <code>PASSWORD</code>, with their respective base64 encoded values.</p>
+
+<h2>Using Secrets in a Pod</h2>
+<p>To use a Secret in a Pod, you reference the Secret in the Pod’s specification. Here’s an example:</p>
+<pre><code>
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod
+spec:
+  containers:
+  - name: example-container
+    image: nginx
+    env:
+    - name: USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: example-secret
+          key: USERNAME
+    - name: PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: example-secret
+          key: PASSWORD
+</code></pre>
+<p>In this example:</p>
+<ul>
+<li>The environment variables <code>USERNAME</code> and <code>PASSWORD</code> in the container are populated with the values from the <code>example-secret</code>.</li>
+</ul>
+
+<h2>Using Secrets as Volume Mounts</h2>
+<p>Secrets can also be mounted as volumes to provide sensitive files to containers. Here’s an example:</p>
+<pre><code>
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod
+spec:
+  containers:
+  - name: example-container
+    image: nginx
+    volumeMounts:
+    - name: secret-volume
+      mountPath: /etc/secret
+  volumes:
+  - name: secret-volume
+    secret:
+      secretName: example-secret
+</code></pre>
+<p>In this example:</p>
+<ul>
+<li>The <code>example-secret</code> is mounted at <code>/etc/secret</code> inside the container.</li>
+</ul>
+
+<h2>Best Practices</h2>
+<ul>
+<li><strong>Base64 Encoding:</strong> Ensure sensitive values in Secrets are base64 encoded.</li>
+<li><strong>RBAC Policies:</strong> Use Kubernetes Role-Based Access Control (RBAC) to control access to Secrets.</li>
+<li><strong>Encryption:</strong> Enable encryption at rest for Secrets in the Kubernetes cluster.</li>
+<li><strong>Data Storage:</strong> Secrets store data in an encoded format.</li>
+</ul>
+
+<h2>Additional Commands</h2>
+<p>To view the details of a secret in YAML format, use the following command:</p>
+<pre><code>kubectl get secret app-secret -o yaml</code></pre>
+<p>Note that Secrets are not encrypted, only encoded. To encrypt the secrets, use an object called <code>EncryptionConfiguration</code>.</p>
+<p>Anyone able to create Pods/Deployments in the same namespace can access the secrets.</p>
+</body>
+</html>
+
+
+<br/>
+<div align="center">
+       <img src="https://github.com/user-attachments/assets/b979acb3-87c4-488b-b1c3-ad95100ed368" width="800"/>
+</div>
+<br/>
