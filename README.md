@@ -994,6 +994,76 @@ spec:
 
 
 
+<br/>
+<hr/>
+<hr/>
+
+
+
+
+
+
+
+
+
+
+<h1>🐳 Rollout and Versioning</h1>
+<h2>Rollout</h2>
+<p>Rollout refers to the process of deploying updates to your applications.</p>
+<ul>
+<li>When you deploy your application, it creates revision 1 of the app.</li>
+<li>When you update the app, it creates revision 2 of the app.</li>
+<li>These revisions help us to roll back to a previous version of deployment if necessary.</li>
+</ul>
+<p>To see the rollout status, run the following command:</p>
+<pre><code>kubectl rollout status deployment/myapp-deployment</code></pre>
+<p>To see the revision history, run the following command:</p>
+<pre><code>kubectl rollout history deployment/myapp-deployment</code></pre>
+<h2>Deployment Strategy</h2>
+<ul>
+<li><strong>Recreate Strategy:</strong> Destroy all the pods and run the new version of the pods. The application is down during the upgrade.</li>
+<li><strong>Rolling Update:</strong> Destroy one pod and create another one (update the pods one by one). This is the default deployment strategy.</li>
+</ul>
+
+<br/>
+<div align="center">
+       <img src="https://github.com/user-attachments/assets/bfb61f0d-cc04-4564-a2a4-ba9a7a20482a" width="800"/>
+</div>
+<br/>
+
+
+<h2>Rollback</h2>
+<p>To roll back your updated deployment, run the following command:</p>
+<pre><code>kubectl rollout undo deployment/myapp-deployment</code></pre>
+
+<br/>
+<div align="center">
+       <img src="https://github.com/user-attachments/assets/445a8678-018e-4742-83ac-acccc5c70a02" width="800"/>
+</div>
+<br/>
+
+
+<h2>Force Replace</h2>
+<p>To force replace a deployment, run the following command:</p>
+<pre><code>kubectl replace --force -f ubuntu-sleeper-3.yaml</code></pre>
+<h2>Command and Args in yaml File</h2>
+
+<br/>
+<div align="center">
+       <img src="https://github.com/user-attachments/assets/be161289-9908-45af-ac32-26881704f065" width="800"/>
+</div>
+<br/>
+
+
+<br/>
+<hr/>
+<hr/>
+
+
+
+
+
+
 
 
 
