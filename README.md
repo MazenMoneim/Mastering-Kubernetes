@@ -1,4 +1,4 @@
-<h1 align="center">
+![image](https://github.com/user-attachments/assets/12db6f88-c667-4880-b964-dc61f4c18ade)<h1 align="center">
     <img src="https://readme-typing-svg.herokuapp.com/?font=Righteous&size=35&center=true&vCenter=true&width=500&height=70&duration=4000&lines=Deed+Dive+on+Kubernetes!;" />
 </h1>
 
@@ -1517,6 +1517,116 @@ spec:
 
 
 
+<br/>
+<hr/>
+<hr/>
+
+<h1>🐳 Security in Kubernetes</h1>
+
+<h2>Controlling Access to the API Server</h2>
+<p>The first line of defense in Kubernetes security is controlling access to the API server. This involves:</p>
+<ul>
+  <li><strong>Authentication:</strong> Determining who can access the server.</li>
+  <li><strong>Authorization (RBAC):</strong> Determining what actions they can perform.</li>
+</ul>
+
+<h2>Network Policies</h2>
+<p>By default, all pods can communicate with each other within the cluster. To prevent unauthorized communication, use network policies.</p>
+
+<h2>Service Accounts</h2>
+<p>Kubernetes does not manage service accounts directly. Instead, it relies on external sources such as files with user details or certificates.</p>
+
+<h2>Managing User Access</h2>
+<p>All user access is managed by the kube-apiserver, whether accessed via the kubectl tool or directly through the API (e.g., <code>curl https://kube-server-ip:6443</code>). The kube-apiserver first authenticates the request and then processes it.</p>
+<p>Authentication mechanisms include static password files, certificates, or identity services. For example, static passwords can be set up with the following format: <code>password123,user4,user-id</code>. The file name is then passed as an option to the kube-apiserver using <code>--basic-auth-file=file-name</code>.</p>
+
+<h2>Certificates</h2>
+<p>Certificates are a key component of Kubernetes security:</p>
+<ul>
+  <li><strong>CA (Certificate Authority):</strong> Has a public key (built into browsers) and a private key (used to sign server certificates).</li>
+  <li><strong>Server:</strong> Generates a public key (sent to users to encrypt symmetric keys) and a private key (used to decrypt symmetric keys).</li>
+  <li><strong>User:</strong> Generates a symmetric key used for ongoing communication.</li>
+</ul>
+<p>Public and private keys are related; one can encrypt data and only the corresponding key can decrypt it. Note that if data is encrypted with the private key, anyone with the public key can decrypt it.</p>
+
+<h2>Key Extensions</h2>
+<ul>
+  <li><strong>Public Key:</strong> .cert, .pem</li>
+  <li><strong>Private Key:</strong> .key, .key.pem</li>
+</ul>
+
+
+
+
+
+<br/>
+<hr/>
+<hr/>
+
+
+
+
+
+
+<h1>🐳 Certificates in Kubernetes</h1>
+
+<h2>Generating CA Key and Certificate with Self-Sign</h2>
+<ol>
+    <li>Generate the CA key:
+        <pre><code>openssl genrsa -out ca.key 2048</code></pre>
+    </li>
+    <li>Create a certificate signing request (CSR):
+        <pre><code>openssl req -new -key ca.key -subj "/CN=KUBERNETES-CA" -out ca.csr</code></pre>
+    </li>
+    <li>Generate the CA certificate:
+        <pre><code>openssl x509 -req -in ca.csr -signkey ca.key -out ca.crt</code></pre>
+    </li>
+</ol>
+
+<h2>Generating Admin User Key and Certificate Signed by the CA</h2>
+<ol>
+    <li>Generate the admin user key:
+        <pre><code>openssl genrsa -out admin.key 2048</code></pre>
+    </li>
+    <li>Create a CSR for the admin user:
+        <pre><code>openssl req -new -key admin.key -subj "/CN=kube-admin" -out admin.csr</code></pre>
+    </li>
+    <li>Sign the admin user certificate with the CA:
+        <pre><code>openssl x509 -req -in admin.csr -CA ca.crt -CAkey ca.key -out admin.crt</code></pre>
+    </li>
+    <li>Optionally, create a CSR with an organization:
+        <pre><code>openssl req -new -key admin.key -subj "/CN=kube-admin/O=system.masters" -out admin.csr</code></pre>
+    </li>
+</ol>
+
+<h2>Using <code>etcdctl</code> for Authentication</h2>
+<p>When using the options <code>--key</code>, <code>--cert</code>, and <code>--cacert</code> with <code>etcdctl</code>, they are used to authenticate requests with ETCD.</p>
+
+<h2>Displaying a Certificate</h2>
+<p>To show a specific certificate, use the following command:</p>
+<pre><code>openssl x509 -in /etc/kubernetes/pki/apiserver.crt -text -noout</code></pre>
+
+<h2>Troubleshooting <code>kube-apiserver</code> Pod Issues</h2>
+<p>If there is a problem with the <code>kube-apiserver</code> pod, check the container log and the ETCD container as the API server gets its data from the ETCD database.</p>
+
+<h2>Kubernetes Certificates API</h2>
+<p>Kubernetes has a built-in Certificates API that manages rotating expired certificates and signing new certificates.</p>
+<p>Create a <code>CertificateSigningRequest</code> object and import the CSR encoded with base64. You can view the CSR as an object in Kubernetes using:</p>
+<pre><code>kubectl get csr</code></pre>
+<p>Approve the CSR using:</p>
+<pre><code>kubectl certificate approve &lt;name-of-the-csr&gt;</code></pre>
+
+<h2>Useful Hint</h2>
+<p>To get the YAML file of any object when you don't know where it is, use the following command:</p>
+<pre><code>kubectl get [object] [name-of-the-object] -o yaml</code></pre>
+
+
+
+
+
+<br/>
+<hr/>
+<hr/>
 
 
 
@@ -1526,13 +1636,41 @@ spec:
 
 
 
+<h1>🐳 KubeConfig File</h1>
+
+<h2>Overview</h2>
+<p>The KubeConfig file is used to configure access to the Kubernetes API server. It allows you to specify the necessary options for the <code>kubectl</code> utility to interact with the API server without having to provide those options in every command.</p>
+<br/>
+<div align="center">
+       <img src="https://github.com/user-attachments/assets/1e385559-f56a-4baa-8c16-2cb4f12efc9e" width="800"/>
+</div>
+<br/>
 
 
+<h2>Configuration</h2>
+<p>When using <code>kubectl</code> to request actions from the Kubernetes API server, you typically need to specify options such as <code>--server</code>, <code>--client-key</code>, <code>--client-certificate</code>, and <code>--certificate-authority</code>. By setting these options in the KubeConfig file, you can use <code>kubectl</code> without specifying them explicitly each time.</p>
 
 
+<br/>
+<div align="center">
+       <img src="https://github.com/user-attachments/assets/579c547f-3ec6-4e85-8924-18ce3e42fd70" width="800"/>
+</div>
+<br/
 
 
+<h2>Default Location</h2>
+<p>By default, Kubernetes looks for the KubeConfig file in <code>$HOME/.kube/config</code>. If you create the file in this location, you do not need to specify the path to the file explicitly in the <code>kubectl</code> command.</p>
 
+<h2>Current Context</h2>
+<p>To use a specific context as the default, set the <code>current-context</code> in the KubeConfig file:</p>
+<pre><code>current-context: dev-user@ggoggole</code></pre>
+
+<h2>Viewing the KubeConfig File</h2>
+<p>To view the KubeConfig file, use the following command:</p>
+<pre><code>kubectl config view</code></pre>
+
+</body>
+</html>
 
 
 
