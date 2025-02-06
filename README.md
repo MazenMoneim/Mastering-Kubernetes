@@ -968,8 +968,6 @@ spec:
 
 
 <h1>🐳 Monitors and Logging in Kubernetes</h1>
-    
- <h2>Monitoring</h2>
 <p>
     Monitoring involves tracking node-level metrics such as the number of nodes in the cluster, node health, CPU, memory, network, and disk utilization.
 </p>
