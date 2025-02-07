@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-configmap
+  namespace: default
+  labels:
+    app: myapp
+data:
+  config.properties: |
+    key1=value1
+    key2=value2
+  another-config: some-value
+binaryData:
+  myfile.bin: |
+    f0VMRgEBAQAAAAAAAAAAAA
+immutable: true
