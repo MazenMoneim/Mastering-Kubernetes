@@ -64,3 +64,4 @@ spec:
     - name: init-myservice
       image: busybox
       command: ['sh', '-c', 'echo Init container is running']
+      
