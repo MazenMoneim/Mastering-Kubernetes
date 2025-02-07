@@ -1,0 +1,46 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: example-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      role: db
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              role: frontend
+        - namespaceSelector:
+            matchLabels:
+              project: myproject
+        - ipBlock:
+            cidr: 172.17.0.0/16
+            except:
+              - 172.17.1.0/24
+      ports:
+        - protocol: TCP
+          port: 3306
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              role: backend
+        - namespaceSelector:
+            matchLabels:
+              department: finance
+        - ipBlock:
+            cidr: 192.168.1.0/24
+            except:
+              - 192.168.1.10/32
+      ports:
+        - protocol: TCP
+          port: 80
+        - protocol: UDP
+          port: 53
+  podSelector:
+    matchLabels:
+      role: db
